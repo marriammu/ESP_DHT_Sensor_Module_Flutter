@@ -29,9 +29,8 @@ class _WebSocketLed extends State<WebSocketLed> {
   late List<LiveRead> chartRead;
   late ChartSeriesController _chartSeriesController;
   late ChartSeriesController _chartReadController;
-  late Future<dynamic> _futureData;
+  // late Future<dynamic> _futureData;
   List<Map<String, dynamic>> data = [];
-  List<Map<String, dynamic>> Difference = [];
 
   List<Map<String, dynamic>> convertToList(List<dynamic> data) {
   List<Map<String, dynamic>> newData = [];
@@ -66,22 +65,21 @@ class _WebSocketLed extends State<WebSocketLed> {
   @override
   void initState() {
     var Temp = getSensorData();
-    if(Comparing(Temp, data))
+ 
+    if(!Comparing(Temp, data))
     {
-    data = convertToList(Temp);
-    }
-    else {
     if(Temp.length > data.length){
         var newLength = Temp.length - data.length;
         for (int j=0;j<newLength;j++)
         {
-        Difference.add(Temp[j+data.length]['Temperature']);
+        data.add(Temp[j+data.length]['Temperature']);
         }
     }
-    data = convertToList(Difference);
     }
+    data= convertToList(Temp);
     chartData = getChartData();
     chartRead = getChartRead();
+    
     Timer.periodic(const Duration(seconds: 1), updateDataSource);
 
 
@@ -101,37 +99,37 @@ class _WebSocketLed extends State<WebSocketLed> {
               child: Column(
                 children: <Widget>[
                   Expanded(
-                    child: FutureBuilder(
-                        future: _futureData,
-                        builder: (context, AsyncSnapshot snapshot) {
+                  //   child: FutureBuilder(
+                  //       future: _futureData,
+                  //       builder: (context, AsyncSnapshot snapshot) {
        
-                          if (snapshot.data != null) {
+                  //         if (snapshot.data != null) {
                        
-                            Timer.periodic(
-                                const Duration(seconds: 1), updateDataSource);
+                  //           Timer.periodic(
+                  //               const Duration(seconds: 1), updateDataSource);
 
-                            return ListView.builder(
-                                scrollDirection: Axis.vertical,
-                                shrinkWrap: true,
-                                itemCount: snapshot.data.length,
-                                itemBuilder: (context, index) {
-                                  return Card(
-                                    elevation: 4,
-                                    child: ListTile(
-                                      // title: Text(snapshot.data[index]["Temprature"].toString()),
-                                      title: Text(
-                                          "snapshot.data[index]['Temperature']"),
-                                      subtitle:
-                                          Text("snapshot.data[index]['Time']"),
-                                    ),
-                                  );
-                                });
-                          } else {
-                            return const CircularProgressIndicator();
-                          }
-                        }),
-                  ),
-                  Expanded(
+                  //           return ListView.builder(
+                  //               scrollDirection: Axis.vertical,
+                  //               shrinkWrap: true,
+                  //               itemCount: snapshot.data.length,
+                  //               itemBuilder: (context, index) {
+                  //                 return Card(
+                  //                   elevation: 4,
+                  //                   child: ListTile(
+                  //                     // title: Text(snapshot.data[index]["Temprature"].toString()),
+                  //                     title: Text(
+                  //                         "snapshot.data[index]['Temperature']"),
+                  //                     subtitle:
+                  //                         Text("snapshot.data[index]['Time']"),
+                  //                   ),
+                  //                 );
+                  //               });
+                  //         } else {
+                  //           return const CircularProgressIndicator();
+                  //         }
+                  //       }),
+                  // ),
+                  // Expanded(
                       child: Scaffold(
                           body: SfCartesianChart(
                               series: <LineSeries<LiveData, int>>[
