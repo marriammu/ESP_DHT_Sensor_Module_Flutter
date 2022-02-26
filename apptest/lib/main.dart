@@ -33,57 +33,50 @@ class _WebSocketLed extends State<WebSocketLed> {
   List<Map<String, dynamic>> data = [];
 
   List<Map<String, dynamic>> convertToList(List<dynamic> data) {
-  List<Map<String, dynamic>> newData = [];
-  var length = data.length;
-  for (int i = 0; i < length; ++i) {
-    newData.add({
-      'ID': data[i]["id"],
-      'Temperature': data[i]["Temperature"],
-      'Time': data[i]["Time"]
-    });
+    List<Map<String, dynamic>> newData = [];
+    var length = data.length;
+    for (int i = 0; i < length; ++i) {
+      newData.add({
+        'ID': data[i]["id"],
+        'Temperature': data[i]["Temperature"],
+        'Time': data[i]["Time"]
+      });
+    }
+    return newData;
   }
-  return newData;
-}
-      
+
   getSensorData() async {
-    var res = await http.get(Uri.parse('http://localhost:80/Sensors'));
+    var res = await http.get(Uri.parse('http://localhost:80/Sensors'),
+        headers: {
+          "Accept": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        });
     if (res.statusCode == 200) {
       var jasonObj = json.decode(res.body);
       return jasonObj['data'];
     }
   }
-  
-  bool Comparing(
-    List<dynamic>NewData,List<Map<String, dynamic>> OldData){
-      if(NewData.length != OldData.length){ return false;}
-  
-      for (int i = 0; i < OldData.length; ++i) {
-        if(NewData[i]["Temperature"]!=NewData[i]["Temperature"]){return false;}
-        }
-      return true ;  
+
+  bool Comparing(List<dynamic> NewData, List<Map<String, dynamic>> OldData) {
+    if (NewData.length != OldData.length) {
+      return false;
     }
+
+    for (int i = 0; i < OldData.length; ++i) {
+      if (NewData[i]["Temperature"] != NewData[i]["Temperature"]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   @override
   void initState() {
-    var Temp = getSensorData();
- 
-    if(!Comparing(Temp, data))
-    {
-    if(Temp.length > data.length){
-        var newLength = Temp.length - data.length;
-        for (int j=0;j<newLength;j++)
-        {
-        data.add(Temp[j+data.length]['Temperature']);
-        }
-    }
-    }
-    data= convertToList(Temp);
     chartData = getChartData();
     chartRead = getChartRead();
-    
+
     Timer.periodic(const Duration(seconds: 1), updateDataSource);
 
-
-    
     super.initState();
   }
 
@@ -99,37 +92,37 @@ class _WebSocketLed extends State<WebSocketLed> {
               child: Column(
                 children: <Widget>[
                   Expanded(
-                  //   child: FutureBuilder(
-                  //       future: _futureData,
-                  //       builder: (context, AsyncSnapshot snapshot) {
-       
-                  //         if (snapshot.data != null) {
-                       
-                  //           Timer.periodic(
-                  //               const Duration(seconds: 1), updateDataSource);
+                      //   child: FutureBuilder(
+                      //       future: _futureData,
+                      //       builder: (context, AsyncSnapshot snapshot) {
 
-                  //           return ListView.builder(
-                  //               scrollDirection: Axis.vertical,
-                  //               shrinkWrap: true,
-                  //               itemCount: snapshot.data.length,
-                  //               itemBuilder: (context, index) {
-                  //                 return Card(
-                  //                   elevation: 4,
-                  //                   child: ListTile(
-                  //                     // title: Text(snapshot.data[index]["Temprature"].toString()),
-                  //                     title: Text(
-                  //                         "snapshot.data[index]['Temperature']"),
-                  //                     subtitle:
-                  //                         Text("snapshot.data[index]['Time']"),
-                  //                   ),
-                  //                 );
-                  //               });
-                  //         } else {
-                  //           return const CircularProgressIndicator();
-                  //         }
-                  //       }),
-                  // ),
-                  // Expanded(
+                      //         if (snapshot.data != null) {
+
+                      //           Timer.periodic(
+                      //               const Duration(seconds: 1), updateDataSource);
+
+                      //           return ListView.builder(
+                      //               scrollDirection: Axis.vertical,
+                      //               shrinkWrap: true,
+                      //               itemCount: snapshot.data.length,
+                      //               itemBuilder: (context, index) {
+                      //                 return Card(
+                      //                   elevation: 4,
+                      //                   child: ListTile(
+                      //                     // title: Text(snapshot.data[index]["Temprature"].toString()),
+                      //                     title: Text(
+                      //                         "snapshot.data[index]['Temperature']"),
+                      //                     subtitle:
+                      //                         Text("snapshot.data[index]['Time']"),
+                      //                   ),
+                      //                 );
+                      //               });
+                      //         } else {
+                      //           return const CircularProgressIndicator();
+                      //         }
+                      //       }),
+                      // ),
+                      // Expanded(
                       child: Scaffold(
                           body: SfCartesianChart(
                               series: <LineSeries<LiveData, int>>[
@@ -198,6 +191,7 @@ class _WebSocketLed extends State<WebSocketLed> {
   void updateDataSource(Timer timer) {
     var index = timer.tick;
     chartData.add(LiveData(time++, data[index]["Temperature"]));
+    // chartData.add(LiveData(time++, (math.Random().nextInt(60) + 30)));
     chartData.removeAt(0);
     _chartSeriesController.updateDataSource(
         addedDataIndex: chartData.length - 1, removedDataIndex: 0);
@@ -205,6 +199,23 @@ class _WebSocketLed extends State<WebSocketLed> {
     chartRead.removeAt(0);
     _chartReadController.updateDataSource(
         addedDataIndex: chartRead.length - 1, removedDataIndex: 0);
+  }
+
+  getReadings() async {
+    log("30");
+
+    var temp = await getSensorData();
+
+    log("40");
+    if (!Comparing(temp, data)) {
+      if (temp.length > data.length) {
+        var newLength = temp.length - data.length;
+        for (int j = 0; j < newLength; j++) {
+          data.add(temp[j + data.length]['Temperature']);
+        }
+      }
+    }
+    data = convertToList(temp);
   }
 
   List<LiveData> getChartData() {
