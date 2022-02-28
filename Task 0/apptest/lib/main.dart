@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
@@ -52,7 +54,7 @@ class _WebSocketLed extends State<WebSocketLed> {
           "Access-Control-Allow-Origin": "*"
         });
     if (res.statusCode == 200) {
-      var jasonObj = json.decode(res.body);
+      var jasonObj = json.decode(res.body) as Map<String, dynamic>;
       return jasonObj['data'];
     }
   }
@@ -75,8 +77,7 @@ class _WebSocketLed extends State<WebSocketLed> {
     chartData = getChartData();
     chartRead = getChartRead();
 
-    Timer.periodic(const Duration(seconds: 1), updateDataSource);
-
+    Timer.periodic(const Duration(seconds: 1), getReadings);
     super.initState();
   }
 
@@ -146,7 +147,7 @@ class _WebSocketLed extends State<WebSocketLed> {
                               primaryYAxis: NumericAxis(
                                   axisLine: const AxisLine(width: 0),
                                   majorTickLines: const MajorTickLines(size: 0),
-                                  title: AxisTitle(text: 'Humidity (%)'))))),
+                                  title: AxisTitle(text: 'Temprature (%)'))))),
                   Expanded(
                       child: Scaffold(
                           body: SfCartesianChart(
@@ -171,7 +172,7 @@ class _WebSocketLed extends State<WebSocketLed> {
                               primaryYAxis: NumericAxis(
                                   axisLine: const AxisLine(width: 0),
                                   majorTickLines: const MajorTickLines(size: 0),
-                                  title: AxisTitle(text: 'Temp (C)'))))),
+                                  title: AxisTitle(text: 'Humidity (C)'))))),
                   Container(
                     margin: EdgeInsets.only(top: 30),
                     child: FlatButton(
@@ -188,10 +189,8 @@ class _WebSocketLed extends State<WebSocketLed> {
   }
 
   int time = 3;
-  void updateDataSource(Timer timer) {
-    var index = timer.tick;
-    chartData.add(LiveData(time++, data[index]["Temperature"]));
-    // chartData.add(LiveData(time++, (math.Random().nextInt(60) + 30)));
+  void updateDataSource(int data) {
+    chartData.add(LiveData(time++, data));
     chartData.removeAt(0);
     _chartSeriesController.updateDataSource(
         addedDataIndex: chartData.length - 1, removedDataIndex: 0);
@@ -201,18 +200,14 @@ class _WebSocketLed extends State<WebSocketLed> {
         addedDataIndex: chartRead.length - 1, removedDataIndex: 0);
   }
 
-  getReadings() async {
-    log("30");
-
+  void getReadings(Timer timer) async {
     var temp = await getSensorData();
-
-    log("40");
-    if (!Comparing(temp, data)) {
-      if (temp.length > data.length) {
-        var newLength = temp.length - data.length;
-        for (int j = 0; j < newLength; j++) {
-          data.add(temp[j + data.length]['Temperature']);
-        }
+    var length = data.length;
+    if (temp.length > data.length) {
+      var newLength = temp.length - data.length;
+      for (int j = 0; j < newLength; j++) {
+        data.add({'Temperature': temp[j + length]['Temperature']});
+        updateDataSource(temp[j + length]['Temperature']);
       }
     }
     data = convertToList(temp);
