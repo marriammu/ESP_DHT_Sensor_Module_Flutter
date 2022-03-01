@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:ui';
 import 'package:tuple/tuple.dart';
+import 'package:http/http.dart' as http;
 // import 'dart:ffi';
+import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 void main() {
   runApp(const MyApp());
 }
+List<Map<int,dynamic>> data =[];
+
  List<double> coord(int label){
    List<double> my_loc=[]; 
     if (label==0){ // modrg
@@ -20,36 +25,14 @@ void main() {
        my_loc.addAll([580,217]);
     }
     else if(label==3){ //TA's Office
-       my_loc.addAll([580,217]); 
+       my_loc.addAll([210,300]); 
     }
     return my_loc;
   }
-//  Point<double> coord(int label){
-//    double x_val=0; 
-//    double y_val=0;
-//    Point my_point;
-//     // double x_value=0; 
-//     // MyVector vec =  MyVector(x_value: 5, y_value: 42);
-//     // MyVector vec(0,0);
-//     if (label==0){ // modrg
-//       x_val=580; 
-//       y_val=217; 
-//     }
-//     else if(label==1){ // hallway
-//       x_val=580; 
-//       y_val=217; 
-//     }
-//     else if(label==2){ //tamer
-//        x_val=580; 
-//        y_val=217; 
-//     }
-//     else if(label==3){ //TA's Office
-//        x_val=580; 
-//        y_val=217; 
-//     }
-//     return   Point(x_val,y_val); 
-//   }
-//  MyVector points_values()
+
+  
+
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -59,15 +42,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
+        
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
@@ -78,14 +53,8 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
 
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+  
 
   final String title;
 
@@ -94,6 +63,35 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  late Future<dynamic> _futureData;
+  List<Map<String, dynamic>> data = [
+    
+  ];
+
+  Future<dynamic> getData() async{
+    var res = await http.get(Uri.parse('http://172.28.130.32:80/Readings')); 
+    if(res.statusCode==200){ 
+      var jasonObj= json.decode(res.body);
+
+    return jasonObj;
+    }
+  }
+
+
+  @override
+  void initState() {
+    
+    
+     _futureData = getData();
+    
+    super.initState();
+
+    
+
+    
+  }
+  
   OpenPainter painter = new OpenPainter();
   // double x = 0, y = 0;
 
@@ -113,6 +111,41 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: 
       Stack(children: [
+
+        Expanded(child:FutureBuilder(
+                future: _futureData,
+                builder: (context, AsyncSnapshot snapshot) {
+                  if (snapshot.data != null) {
+                    var length = snapshot.data.length;
+                    data.clear();
+                    for (int i = 0; i < length; ++i) {
+                      data.add({
+                        "data": snapshot.data["data"],
+                        
+                      });
+                    }
+                    return ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            elevation: 4,
+                            child: ListTile(
+                              
+                              title: Text(snapshot.data["data"].toString()),
+                          
+                            ),
+                          );
+                        });
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                }),),
+
+
+
+
         Center(
           child: Image.asset('lib/img/floor.jpeg'),
         ),
@@ -130,6 +163,8 @@ class _MyHomePageState extends State<MyHomePage> {
           // child: Text('x: ' + this.x.toString() + ', y: ' + this.y.toString()), 
         )
       ]),
+
+      
       // Container(
       //   decoration: BoxDecoration(
       //   image: DecorationImage(
