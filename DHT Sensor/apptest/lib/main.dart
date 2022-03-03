@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -93,37 +92,7 @@ class _WebSocketLed extends State<WebSocketLed> {
               child: Column(
                 children: <Widget>[
                   Expanded(
-                      //   child: FutureBuilder(
-                      //       future: _futureData,
-                      //       builder: (context, AsyncSnapshot snapshot) {
 
-                      //         if (snapshot.data != null) {
-
-                      //           Timer.periodic(
-                      //               const Duration(seconds: 1), updateDataSource);
-
-                      //           return ListView.builder(
-                      //               scrollDirection: Axis.vertical,
-                      //               shrinkWrap: true,
-                      //               itemCount: snapshot.data.length,
-                      //               itemBuilder: (context, index) {
-                      //                 return Card(
-                      //                   elevation: 4,
-                      //                   child: ListTile(
-                      //                     // title: Text(snapshot.data[index]["Temprature"].toString()),
-                      //                     title: Text(
-                      //                         "snapshot.data[index]['Temperature']"),
-                      //                     subtitle:
-                      //                         Text("snapshot.data[index]['Time']"),
-                      //                   ),
-                      //                 );
-                      //               });
-                      //         } else {
-                      //           return const CircularProgressIndicator();
-                      //         }
-                      //       }),
-                      // ),
-                      // Expanded(
                       child: Scaffold(
                           body: SfCartesianChart(
                               series: <LineSeries<LiveData, int>>[
