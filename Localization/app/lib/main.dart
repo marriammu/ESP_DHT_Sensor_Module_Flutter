@@ -19,7 +19,7 @@ void main() {
 }
 
 Future<int> getData() async { // return json obj
-    var res = await http.get(Uri.parse('http://192.168.1.8:80/Readings'),
+    var res = await http.get(Uri.parse('http://IP Address:80/Readings'),
         headers: {
           "Accept": "application/json",
           "Access-Control-Allow-Origin": "*"
