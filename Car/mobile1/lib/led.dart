@@ -133,15 +133,15 @@ class _ChatPage extends State<ChatPage> {
               externalColor: Colors.green[500],
               internalColor: Colors.grey[300],
               mainAction: () {
-                _sendMessage('3');
+                _sendMessage('S');
               },
               sections: [
-                    () => _sendMessage('2'),
-                    () => _sendMessage('1'),
-                    () => _sendMessage('4'),
-                    () => _sendMessage('6'),
-                    () => _sendMessage('5'),
-                    () => _sendMessage('7'),
+                    () => _sendMessage('R'),
+                    () => _sendMessage('F'),
+                    () => _sendMessage('L'),
+                    () => _sendMessage('L'),
+                    () => _sendMessage('B'),
+                    () => _sendMessage('R'),
               ],
             ),
             Flexible(
