@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import './screens/login-page.dart';
 import './screens/screen2.dart';
+import './screens/screen3.dart';
 
 void main() {
   runApp(MyApp());
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
        initialRoute: '/',
        routes: {
          '/second': (context) => const SecondPage(),
+         '/third': (context) => const ThirdPage(),
       }
     );
   }
