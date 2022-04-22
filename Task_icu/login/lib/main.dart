@@ -29,11 +29,11 @@ class MyApp extends StatelessWidget {
        initialRoute: '/',
        routes: {
          '/second': (context) => const SecondPage(),
-         '/third': (context) => const WebSocketLed(),
+        //  '/third': (context) => const WebSocketLed(),
          '/fifth': (context) => const FifthPage(),
          '/sixth': (context) => const SixthPage(),
          
-        //  '/third': (context) => const Alaa(),//mobile
+         '/third': (context) => const Alaa(),//mobile
       }
     );
   }

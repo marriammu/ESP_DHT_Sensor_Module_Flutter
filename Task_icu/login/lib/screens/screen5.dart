@@ -96,11 +96,10 @@ class _FifthPage extends State<FifthPage> {
           backgroundColor: Colors.transparent,
           // appBar: AppBar(
           //     title: Text("Patient Rooms",style: kHeading)),
-          body: FittedBox(
-            fit: BoxFit.fitHeight,
+          body: 
             
-            child: Container(
-              alignment: Alignment.topCenter, //inner widget alignment to center
+             Container(
+              alignment: Alignment.center, //inner widget alignment to center
               padding: EdgeInsets.all(20),
               child: Column(
                 children: <Widget>[
@@ -108,7 +107,7 @@ class _FifthPage extends State<FifthPage> {
                     height: 50,
                     child: Center(
                       child: Text(
-                        'Patient Rooms',
+                        'Patient 3',
                         style: kHeading,
                       ),
                     ),
@@ -117,11 +116,7 @@ class _FifthPage extends State<FifthPage> {
                             SizedBox(
                     height: 30,
                   ),
-                  Container(
-                    height:200,
-                    width:700,
-                    alignment: Alignment.center,
-
+                  Expanded(
                       child: Scaffold(
                           body: SfCartesianChart(
                               series: <LineSeries<LiveData, int>>[
@@ -145,7 +140,7 @@ class _FifthPage extends State<FifthPage> {
                               primaryYAxis: NumericAxis(
                                   axisLine: const AxisLine(width: 0),
                                   majorTickLines: const MajorTickLines(size: 0),
-                                  title: AxisTitle(text: 'Temprature (%)'))))),      
+                                  title: AxisTitle(text: 'Temprature (C)'))))),      
                   
                   Container(
                     width:150,
@@ -175,7 +170,7 @@ class _FifthPage extends State<FifthPage> {
                   ),
                   
                 ],
-              )))),
+              ))),
         ),
       ],
       

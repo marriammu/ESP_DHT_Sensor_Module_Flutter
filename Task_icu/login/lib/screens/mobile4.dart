@@ -179,7 +179,7 @@ class _Alaa extends State<Alaa> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                     child: FlatButton(
-                      onPressed: () {Navigator.pushNamed(context, '/second');},
+                      onPressed: () {Navigator.pushNamed(context, '/sixth');},
                       child: Text('Patient 2',style: kBodyText),
                     ),
                   ),
@@ -219,7 +219,7 @@ class _Alaa extends State<Alaa> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                     child: FlatButton(
-                      onPressed: () {Navigator.pushNamed(context, '/second');},
+                      onPressed: () {Navigator.pushNamed(context, '/fifth');},
                       child: Text('Patient 3',style: kBodyText),
                     ),
                   ),
