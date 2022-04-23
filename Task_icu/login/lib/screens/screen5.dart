@@ -51,7 +51,7 @@ class _FifthPage extends State<FifthPage> {
   }
 
   getSensorData() async {
-    var res = await http.get(Uri.parse('http://localhost:80/Sensors'),
+    var res = await http.get(Uri.parse('http://192.168.1.32:80/Sensors'),
         headers: {
           "Accept": "application/json",
           "Access-Control-Allow-Origin": "*"
@@ -126,7 +126,7 @@ class _FifthPage extends State<FifthPage> {
                             _chartSeriesController = controller;
                           },
                           dataSource: chartData,
-                          color: const Color.fromRGBO(192, 108, 132, 1),
+                          color: Color.fromARGB(255, 19, 162, 14), 
                           xValueMapper: (LiveData sales, _) => sales.time,
                           yValueMapper: (LiveData sales, _) => sales.speed,
                         )
@@ -151,7 +151,7 @@ class _FifthPage extends State<FifthPage> {
                   ),
                     child: FlatButton(
                       onPressed: () async {
-                  await http.post(Uri.parse('http://localhost:80/toggle'));
+                  await http.post(Uri.parse('http://192.168.1.32:80/toggle'));
                 },
                       child: Text('ON/OFF',style: kBodyText),
                     ),

@@ -18,18 +18,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Alaa(),
+      home: Test(),
     );
   }
 }
 
-class Alaa extends StatefulWidget {
-  const Alaa({Key key}) : super(key: key);
+class Test extends StatefulWidget {
+  const Test({Key key}) : super(key: key);
   @override
-  _Alaa createState() => _Alaa();
+  _Test createState() => _Test();
 }
 
-class _Alaa extends State<Alaa> {
+class _Test extends State<Test> {
    List<LiveData> chartData;
    List<LiveRead> chartRead;
    ChartSeriesController _chartSeriesController;
@@ -43,7 +43,7 @@ class _Alaa extends State<Alaa> {
     for (int i = 0; i < length; ++i) {
       newData.add({
         'ID': data[i]["id"],
-        'Temperature': data[i]["Temperature"],
+        'Humidity': data[i]["Humidity"],
         'Time': data[i]["Time"]
       });
     }
@@ -68,7 +68,7 @@ class _Alaa extends State<Alaa> {
     }
 
     for (int i = 0; i < OldData.length; ++i) {
-      if (NewData[i]["Temperature"] != NewData[i]["Temperature"]) {
+      if (NewData[i]["Humidity"] != NewData[i]["Humidity"]) {
         return false;
       }
     }
@@ -91,19 +91,32 @@ class _Alaa extends State<Alaa> {
         BackgroundImage(),
         
         SafeArea(
-      
+          
       child: Scaffold(
-        backgroundColor: Colors.transparent,
-          appBar: AppBar(
-              title: Text("Patient Rooms"), backgroundColor: Colors.redAccent),
-          body: Container(
-           
-              alignment: Alignment.topCenter, //inner widget alignment to center
+          backgroundColor: Colors.transparent,
+          // appBar: AppBar(
+          //     title: Text("Patient Rooms",style: kHeading)),
+          body: 
+            
+             Container(
+              alignment: Alignment.center, //inner widget alignment to center
               padding: EdgeInsets.all(20),
               child: Column(
                 children: <Widget>[
+                  Container(
+                    height: 50,
+                    child: Center(
+                      child: Text(
+                        'Patient 2',
+                        style: kHeading,
+                      ),
+                    ),
+                  ),
+                
+                            SizedBox(
+                    height: 30,
+                  ),
                   Expanded(
-
                       child: Scaffold(
                           body: SfCartesianChart(
                               series: <LineSeries<LiveData, int>>[
@@ -127,107 +140,41 @@ class _Alaa extends State<Alaa> {
                               primaryYAxis: NumericAxis(
                                   axisLine: const AxisLine(width: 0),
                                   majorTickLines: const MajorTickLines(size: 0),
-                                  title: AxisTitle(text: 'Temp (C)'))))),
-                                  
-                    Container(
-                    width:120,
+                                  title: AxisTitle(text: 'Humidity (%)'))))),      
+                  
+                  Container(
+                    width:150,
                     margin: EdgeInsets.only(top: 30),
                     decoration: BoxDecoration(
                     color: Colors.redAccent,
                     borderRadius: BorderRadius.circular(16),
                   ),
                     child: FlatButton(
-                      onPressed: () {Navigator.pushNamed(context, '/second');},
-                      child: Text('Patient 1',style: kBodyText),
+                      onPressed: () async {
+                  await http.post(Uri.parse('http://localhost:80/toggle'));
+                },
+                      child: Text('ON/OFF',style: kBodyText),
                     ),
                   ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Expanded(
-                      child: Scaffold(
-                          body: SfCartesianChart(
-                              series: <LineSeries<LiveRead, int>>[
-                        LineSeries<LiveRead, int>(
-                          onRendererCreated:
-                              (ChartSeriesController controller) {
-                            _chartReadController = controller;
-                          },
-                          dataSource: chartRead,
-                          color: const Color.fromRGBO(50, 20, 100, 1),
-                          xValueMapper: (LiveRead sales, _) => sales.time,
-                          yValueMapper: (LiveRead sales, _) => sales.temp,
-                        )
-                      ],
-                              primaryXAxis: NumericAxis(
-                                  majorGridLines:
-                                      const MajorGridLines(width: 0),
-                                  edgeLabelPlacement: EdgeLabelPlacement.shift,
-                                  interval: 3,
-                                  title: AxisTitle(text: 'Time (seconds)')),
-                              primaryYAxis: NumericAxis(
-                                  axisLine: const AxisLine(width: 0),
-                                  majorTickLines: const MajorTickLines(size: 0),
-                                  title: AxisTitle(text: 'Humidity (%)'))))),
-                                 
-
-                              Container(
-                    width:120,
+                  Container(
+                    width:150,
                     margin: EdgeInsets.only(top: 30),
                     decoration: BoxDecoration(
-                    color: Colors.redAccent,
+                    color: Colors.blue,
                     borderRadius: BorderRadius.circular(16),
                   ),
                     child: FlatButton(
-                      onPressed: () {Navigator.pushNamed(context, '/sixth');},
-                      child: Text('Patient 2',style: kBodyText),
+                      onPressed: () {Navigator.pushNamed(context, '/third');},
+                      child: Text('Back',style: kBodyText),
                     ),
                   ),
-                   SizedBox(
-                    height: 30,
-                  ),
-                  Expanded(
-                      child: Scaffold(
-                          body: SfCartesianChart(
-                              series: <LineSeries<LiveRead, int>>[
-                        LineSeries<LiveRead, int>(
-                          onRendererCreated:
-                              (ChartSeriesController controller) {
-                            _chartReadController = controller;
-                          },
-                          dataSource: chartRead,
-                          color: Color.fromARGB(255, 20, 100, 61),
-                          xValueMapper: (LiveRead sales, _) => sales.time,
-                          yValueMapper: (LiveRead sales, _) => sales.temp,
-                        )
-                      ],
-                              primaryXAxis: NumericAxis(
-                                  majorGridLines:
-                                      const MajorGridLines(width: 0),
-                                  edgeLabelPlacement: EdgeLabelPlacement.shift,
-                                  interval: 3,
-                                  title: AxisTitle(text: 'Time (seconds)')),
-                              primaryYAxis: NumericAxis(
-                                  axisLine: const AxisLine(width: 0),
-                                  majorTickLines: const MajorTickLines(size: 0),
-                                  title: AxisTitle(text: 'Humidity (%)'))))),
-                 Container(
-                    width:120,
-                    margin: EdgeInsets.only(top: 30),
-                    decoration: BoxDecoration(
-                    color: Colors.redAccent,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                    child: FlatButton(
-                      onPressed: () {Navigator.pushNamed(context, '/fifth');},
-                      child: Text('Patient 3',style: kBodyText),
-                    ),
-                  ),
-                 
+                  
                 ],
-              )))),
+              ))),
+        ),
       ],
-      );
+      
+    );
   }
 
   int time = 3;
@@ -248,8 +195,8 @@ class _Alaa extends State<Alaa> {
     if (temp.length > data.length) {
       var newLength = temp.length - data.length;
       for (int j = 0; j < newLength; j++) {
-        data.add({'Temperature': temp[j + length]['Temperature']});
-        updateDataSource(temp[j + length]['Temperature']);
+        data.add({'Humidity': temp[j + length]['Humidity']});
+        updateDataSource(temp[j + length]['Humidity']);
       }
     }
     data = convertToList(temp);

@@ -43,7 +43,7 @@ class _SixthPage extends State<SixthPage> {
     for (int i = 0; i < length; ++i) {
       newData.add({
         'ID': data[i]["id"],
-        'Temperature': data[i]["Temperature"],
+        'Humidity': data[i]["Humidity"],
         'Time': data[i]["Time"]
       });
     }
@@ -51,7 +51,7 @@ class _SixthPage extends State<SixthPage> {
   }
 
   getSensorData() async {
-    var res = await http.get(Uri.parse('http://localhost:80/Sensors'),
+    var res = await http.get(Uri.parse('http://192.168.1.32:80/Sensors'),
         headers: {
           "Accept": "application/json",
           "Access-Control-Allow-Origin": "*"
@@ -68,7 +68,7 @@ class _SixthPage extends State<SixthPage> {
     }
 
     for (int i = 0; i < OldData.length; ++i) {
-      if (NewData[i]["Temperature"] != NewData[i]["Temperature"]) {
+      if (NewData[i]["Humidity"] != NewData[i]["Humidity"]) {
         return false;
       }
     }
@@ -119,16 +119,16 @@ class _SixthPage extends State<SixthPage> {
                   Expanded(
                       child: Scaffold(
                           body: SfCartesianChart(
-                              series: <LineSeries<LiveData, int>>[
-                        LineSeries<LiveData, int>(
+                              series: <LineSeries<LiveRead, int>>[
+                        LineSeries<LiveRead, int>(
                           onRendererCreated:
                               (ChartSeriesController controller) {
-                            _chartSeriesController = controller;
+                            _chartReadController = controller;
                           },
-                          dataSource: chartData,
-                          color: const Color.fromRGBO(192, 108, 132, 1),
-                          xValueMapper: (LiveData sales, _) => sales.time,
-                          yValueMapper: (LiveData sales, _) => sales.speed,
+                          dataSource: chartRead,
+                          color: const Color.fromRGBO(50, 20, 100, 1),
+                          xValueMapper: (LiveRead sales, _) => sales.time,
+                          yValueMapper: (LiveRead sales, _) => sales.hum,
                         )
                       ],
                               primaryXAxis: NumericAxis(
@@ -140,7 +140,7 @@ class _SixthPage extends State<SixthPage> {
                               primaryYAxis: NumericAxis(
                                   axisLine: const AxisLine(width: 0),
                                   majorTickLines: const MajorTickLines(size: 0),
-                                  title: AxisTitle(text: 'Temprature (C)'))))),      
+                                  title: AxisTitle(text: 'Humidity (%)'))))),     
                   
                   Container(
                     width:150,
@@ -151,7 +151,7 @@ class _SixthPage extends State<SixthPage> {
                   ),
                     child: FlatButton(
                       onPressed: () async {
-                  await http.post(Uri.parse('http://localhost:80/toggle'));
+                  await http.post(Uri.parse('http://192.168.1.32:80/toggle'));
                 },
                       child: Text('ON/OFF',style: kBodyText),
                     ),
@@ -183,23 +183,23 @@ class _SixthPage extends State<SixthPage> {
     chartData.removeAt(0);
     _chartSeriesController.updateDataSource(
         addedDataIndex: chartData.length - 1, removedDataIndex: 0);
-    chartRead.add(LiveRead(time++, (math.Random().nextInt(60) + 30)));
+    chartRead.add(LiveRead(time++, data));
     chartRead.removeAt(0);
     _chartReadController.updateDataSource(
         addedDataIndex: chartRead.length - 1, removedDataIndex: 0);
   }
 
   void getReadings(Timer timer) async {
-    var temp = await getSensorData();
+    var hum = await getSensorData();
     var length = data.length;
-    if (temp.length > data.length) {
-      var newLength = temp.length - data.length;
-      for (int j = 0; j < newLength; j++) {
-        data.add({'Temperature': temp[j + length]['Temperature']});
-        updateDataSource(temp[j + length]['Temperature']);
+    if (hum.length > data.length) {
+      var newLength = hum.length - data.length;
+      for (int j = 3; j < newLength; j++) {
+        data.add({'Humidity': hum[j + length]['Humidity']});
+        updateDataSource(hum[j + length]['Humidity']);
       }
     }
-    data = convertToList(temp);
+    data = convertToList(hum);
   }
 
   List<LiveData> getChartData() {
@@ -226,7 +226,7 @@ class LiveData {
 }
 
 class LiveRead {
-  LiveRead(this.time, this.temp);
+  LiveRead(this.time, this.hum);
   final int time;
-  final num temp;
+  final num hum;
 }

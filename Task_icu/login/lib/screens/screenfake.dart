@@ -32,8 +32,10 @@ class WebSocketLed extends StatefulWidget {
 class _WebSocketLed extends State<WebSocketLed> {
    List<LiveData> chartData;
    List<LiveRead> chartRead;
+   List<LiveNum> chartNum;
    ChartSeriesController _chartSeriesController;
    ChartSeriesController _chartReadController;
+   ChartSeriesController _chartNumController;
   // late Future<dynamic> _futureData;
   List<Map<String, dynamic>> data = [];
 
@@ -58,6 +60,7 @@ class _WebSocketLed extends State<WebSocketLed> {
   void initState() {
     chartData = getChartData();
     chartRead = getChartRead();
+    chartNum = getChartNum();
 
     Timer.periodic(const Duration(seconds: 1), updateDataSource);
     super.initState();
@@ -125,7 +128,7 @@ class _WebSocketLed extends State<WebSocketLed> {
                               primaryYAxis: NumericAxis(
                                   axisLine: const AxisLine(width: 0),
                                   majorTickLines: const MajorTickLines(size: 0),
-                                  title: AxisTitle(text: 'Humidity (C)'))))
+                                  title: AxisTitle(text: 'Humidity (%)'))))
                          ),
                          Container(
                     width:150,
@@ -151,16 +154,16 @@ class _WebSocketLed extends State<WebSocketLed> {
                            width:700,
                            child:Scaffold(
                           body: SfCartesianChart(
-                              series: <LineSeries<LiveData, int>>[
-                        LineSeries<LiveData, int>(
+                              series: <LineSeries<LiveNum, int>>[
+                        LineSeries<LiveNum, int>(
                           onRendererCreated:
                               (ChartSeriesController controller) {
-                            _chartSeriesController = controller;
+                            _chartNumController = controller;
                           },
-                          dataSource: chartData,
+                          dataSource: chartNum,
                           color: const Color.fromRGBO(192, 108, 132, 1),
-                          xValueMapper: (LiveData sales, _) => sales.time,
-                          yValueMapper: (LiveData sales, _) => sales.speed,
+                          xValueMapper: (LiveNum sales, _) => sales.time,
+                          yValueMapper: (LiveNum sales, _) => sales.hum,
                         )
                       ],
                               primaryXAxis: NumericAxis(
@@ -190,11 +193,7 @@ class _WebSocketLed extends State<WebSocketLed> {
 
                     )
                     ],
-
-                    
-                    )
-                
-                    
+                    )   
                     ),
                             SizedBox(
                     height: 30,
@@ -270,10 +269,16 @@ class _WebSocketLed extends State<WebSocketLed> {
     chartData.removeAt(0);
     _chartSeriesController.updateDataSource(
         addedDataIndex: chartData.length - 1, removedDataIndex: 0);
+
         chartRead.add(LiveRead(time++, (math.Random().nextInt(60) + 30)));
     chartRead.removeAt(0);
-    _chartSeriesController.updateDataSource(
+    _chartReadController.updateDataSource(
         addedDataIndex: chartRead.length - 1, removedDataIndex: 0);
+
+      chartNum.add(LiveNum(time++, (math.Random().nextInt(60) + 30)));
+    chartNum.removeAt(0);
+    _chartNumController.updateDataSource(
+        addedDataIndex: chartNum.length - 1, removedDataIndex: 0);
   }
 
   
@@ -293,6 +298,15 @@ class _WebSocketLed extends State<WebSocketLed> {
       LiveRead(2, 22),
     ];
   }
+
+
+  List<LiveNum> getChartNum() {
+    return <LiveNum>[
+      LiveNum(0, 10),
+      LiveNum(1, 15),
+      LiveNum(2, 22),
+    ];
+  }
 }
 
 class LiveData {
@@ -305,4 +319,10 @@ class LiveRead {
   LiveRead(this.time, this.temp);
   final int time;
   final num temp;
+}
+
+class LiveNum {
+  LiveNum(this.time, this.hum);
+  final int time;
+  final num hum;
 }
