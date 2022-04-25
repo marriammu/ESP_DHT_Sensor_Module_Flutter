@@ -107,7 +107,7 @@ class _Test extends State<Test> {
                     height: 50,
                     child: Center(
                       child: Text(
-                        'Patient 2',
+                        'Patient 3',
                         style: kHeading,
                       ),
                     ),
@@ -126,7 +126,7 @@ class _Test extends State<Test> {
                             _chartSeriesController = controller;
                           },
                           dataSource: chartData,
-                          color: const Color.fromRGBO(192, 108, 132, 1),
+                          color: Color.fromARGB(255, 116, 192, 108),
                           xValueMapper: (LiveData sales, _) => sales.time,
                           yValueMapper: (LiveData sales, _) => sales.speed,
                         )
