@@ -85,6 +85,7 @@ class _WebSocketLed extends State<WebSocketLed> {
   void initState() {
     chartData = getChartData();
     chartRead = getChartRead();
+    chartNum = getChartNum();
 
     Timer.periodic(const Duration(seconds: 1), getReadings);
     super.initState();
@@ -162,7 +163,7 @@ class _WebSocketLed extends State<WebSocketLed> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                     child: FlatButton(
-                      onPressed: () {Navigator.pushNamed(context, '/second');},
+                      onPressed: () {Navigator.pushNamed(context, '/fifth');},
                       child: Text('Patient 1',style: kBodyText),
                     ),
                   ),
@@ -337,9 +338,9 @@ class _WebSocketLed extends State<WebSocketLed> {
   }
   List<LiveNum> getChartNum() {
     return <LiveNum>[
-      LiveNum(0, 10),
-      LiveNum(1, 15),
-      LiveNum(2, 22),
+      LiveNum(0, 5),
+      LiveNum(1, 25),
+      LiveNum(2, 13),
     ];
   }
 

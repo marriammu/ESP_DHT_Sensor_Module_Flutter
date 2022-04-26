@@ -107,7 +107,7 @@ class _FifthPage extends State<FifthPage> {
                     height: 50,
                     child: Center(
                       child: Text(
-                        'Patient 3',
+                        'Patient 2',
                         style: kHeading,
                       ),
                     ),
@@ -126,7 +126,7 @@ class _FifthPage extends State<FifthPage> {
                             _chartSeriesController = controller;
                           },
                           dataSource: chartData,
-                          color: Color.fromARGB(255, 19, 162, 14), 
+                          color: const Color.fromRGBO(192, 108, 132, 1),
                           xValueMapper: (LiveData sales, _) => sales.time,
                           yValueMapper: (LiveData sales, _) => sales.speed,
                         )

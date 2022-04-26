@@ -107,7 +107,7 @@ class _SixthPage extends State<SixthPage> {
                     height: 50,
                     child: Center(
                       child: Text(
-                        'Patient 2',
+                        'Patient 3',
                         style: kHeading,
                       ),
                     ),
@@ -126,7 +126,7 @@ class _SixthPage extends State<SixthPage> {
                             _chartReadController = controller;
                           },
                           dataSource: chartRead,
-                          color: const Color.fromRGBO(50, 20, 100, 1),
+                          color: Color.fromARGB(255, 116, 192, 108),
                           xValueMapper: (LiveRead sales, _) => sales.time,
                           yValueMapper: (LiveRead sales, _) => sales.hum,
                         )
