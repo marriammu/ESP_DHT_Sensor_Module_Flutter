@@ -32,33 +32,40 @@ class Alaa extends StatefulWidget {
 class _Alaa extends State<Alaa> {
    List<LiveData> chartData;
    List<LiveRead> chartRead;
+   List<LiveNum> chartNum;
    ChartSeriesController _chartSeriesController;
    ChartSeriesController _chartReadController;
+   ChartSeriesController _chartNumController;
   // late Future<dynamic> _futureData;
   List<Map<String, dynamic>> data = [];
-
+  
   List<Map<String, dynamic>> convertToList(List<dynamic> data) {
     List<Map<String, dynamic>> newData = [];
     var length = data.length;
     for (int i = 0; i < length; ++i) {
       newData.add({
-        'ID': data[i]["id"],
         'Temperature': data[i]["Temperature"],
+        'Humidity': data[i]["Humidity"],
         'Time': data[i]["Time"]
       });
     }
+    print(newData);
     return newData;
   }
 
   getSensorData() async {
-    var res = await http.get(Uri.parse('http://192.168.1.32:80/Sensors'),
+    // var res = await http.get(Uri.parse('http://192.168.1.9:3000/SensorsData'),
+    var res = await http.get(Uri.parse('http://192.168.1.32:3000/SensorsData'),
         headers: {
           "Accept": "application/json",
           "Access-Control-Allow-Origin": "*"
         });
     if (res.statusCode == 200) {
-      var jasonObj = json.decode(res.body) as Map<String, dynamic>;
-      return jasonObj['data'];
+      var jasonObj = json.decode(res.body) as List<dynamic>;
+      print('7aga');
+      print(jasonObj);
+      return jasonObj;
+
     }
   }
 
@@ -71,6 +78,9 @@ class _Alaa extends State<Alaa> {
       if (NewData[i]["Temperature"] != NewData[i]["Temperature"]) {
         return false;
       }
+      if (NewData[i]["Humidity"] != NewData[i]["Humidity"]) {
+        return false;
+      }
     }
     return true;
   }
@@ -79,6 +89,7 @@ class _Alaa extends State<Alaa> {
   void initState() {
     chartData = getChartData();
     chartRead = getChartRead();
+    chartNum = getChartNum();
 
     Timer.periodic(const Duration(seconds: 1), getReadings);
     super.initState();
@@ -96,6 +107,7 @@ class _Alaa extends State<Alaa> {
         backgroundColor: Colors.transparent,
           appBar: AppBar(
               title: Text("Patient Rooms"), backgroundColor: Colors.redAccent),
+          
           body: Container(
            
               alignment: Alignment.topCenter, //inner widget alignment to center
@@ -106,8 +118,49 @@ class _Alaa extends State<Alaa> {
 
                       child: Scaffold(
                           body: SfCartesianChart(
-                              series: <LineSeries<LiveData, int>>[
-                        LineSeries<LiveData, int>(
+                              series: <LineSeries<LiveNum, int>>[
+                        LineSeries<LiveNum, int>(
+                          onRendererCreated:
+                              (ChartSeriesController controller) {
+                            _chartNumController = controller;
+                          },
+                          dataSource: chartNum,
+                          color: const Color.fromRGBO(50, 20, 100, 1),
+                          xValueMapper: (LiveNum sales, _) => sales.time,
+                          yValueMapper: (LiveNum sales, _) => sales.number,
+                        )
+                      ],
+                              primaryXAxis: NumericAxis(
+                                  majorGridLines:
+                                      const MajorGridLines(width: 0),
+                                  edgeLabelPlacement: EdgeLabelPlacement.shift,
+                                  interval: 3,
+                                  title: AxisTitle(text: 'Time (seconds)')),
+                              primaryYAxis: NumericAxis(
+                                  axisLine: const AxisLine(width: 0),
+                                  majorTickLines: const MajorTickLines(size: 0),
+                                  title: AxisTitle(text: 'Sensor'))))),
+                                  
+                    Container(
+                    width:120,
+                    margin: EdgeInsets.only(top: 30),
+                    decoration: BoxDecoration(
+                    color: Colors.redAccent,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                    child: FlatButton(
+                      onPressed: () {Navigator.pushNamed(context, '/fifth');},
+                      child: Text('Patient 1',style: kBodyText),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Expanded(
+                      child: Scaffold(
+                          body: SfCartesianChart(
+                              series: <LineSeries<LiveData, double>>[
+                        LineSeries<LiveData, double>(
                           onRendererCreated:
                               (ChartSeriesController controller) {
                             _chartSeriesController = controller;
@@ -128,47 +181,6 @@ class _Alaa extends State<Alaa> {
                                   axisLine: const AxisLine(width: 0),
                                   majorTickLines: const MajorTickLines(size: 0),
                                   title: AxisTitle(text: 'Temp (C)'))))),
-                                  
-                    Container(
-                    width:120,
-                    margin: EdgeInsets.only(top: 30),
-                    decoration: BoxDecoration(
-                    color: Colors.redAccent,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                    child: FlatButton(
-                      onPressed: () {Navigator.pushNamed(context, '/second');},
-                      child: Text('Patient 1',style: kBodyText),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Expanded(
-                      child: Scaffold(
-                          body: SfCartesianChart(
-                              series: <LineSeries<LiveRead, int>>[
-                        LineSeries<LiveRead, int>(
-                          onRendererCreated:
-                              (ChartSeriesController controller) {
-                            _chartReadController = controller;
-                          },
-                          dataSource: chartRead,
-                          color: const Color.fromRGBO(50, 20, 100, 1),
-                          xValueMapper: (LiveRead sales, _) => sales.time,
-                          yValueMapper: (LiveRead sales, _) => sales.temp,
-                        )
-                      ],
-                              primaryXAxis: NumericAxis(
-                                  majorGridLines:
-                                      const MajorGridLines(width: 0),
-                                  edgeLabelPlacement: EdgeLabelPlacement.shift,
-                                  interval: 3,
-                                  title: AxisTitle(text: 'Time (seconds)')),
-                              primaryYAxis: NumericAxis(
-                                  axisLine: const AxisLine(width: 0),
-                                  majorTickLines: const MajorTickLines(size: 0),
-                                  title: AxisTitle(text: 'Humidity (%)'))))),
                                  
 
                               Container(
@@ -179,7 +191,7 @@ class _Alaa extends State<Alaa> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                     child: FlatButton(
-                      onPressed: () {Navigator.pushNamed(context, '/sixth');},
+                      onPressed: () {Navigator.pushNamed(context, '/fifth');},
                       child: Text('Patient 2',style: kBodyText),
                     ),
                   ),
@@ -189,14 +201,14 @@ class _Alaa extends State<Alaa> {
                   Expanded(
                       child: Scaffold(
                           body: SfCartesianChart(
-                              series: <LineSeries<LiveRead, int>>[
-                        LineSeries<LiveRead, int>(
+                              series: <LineSeries<LiveRead, double>>[
+                        LineSeries<LiveRead, double>(
                           onRendererCreated:
                               (ChartSeriesController controller) {
                             _chartReadController = controller;
                           },
                           dataSource: chartRead,
-                          color: Color.fromARGB(255, 20, 100, 61),
+                          color: Color.fromARGB(255, 116, 192, 108),
                           xValueMapper: (LiveRead sales, _) => sales.time,
                           yValueMapper: (LiveRead sales, _) => sales.temp,
                         )
@@ -210,7 +222,8 @@ class _Alaa extends State<Alaa> {
                               primaryYAxis: NumericAxis(
                                   axisLine: const AxisLine(width: 0),
                                   majorTickLines: const MajorTickLines(size: 0),
-                                  title: AxisTitle(text: 'Humidity (%)'))))),
+                                  title: AxisTitle(text: 'Humidity'))))),
+
                  Container(
                     width:120,
                     margin: EdgeInsets.only(top: 30),
@@ -219,8 +232,21 @@ class _Alaa extends State<Alaa> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                     child: FlatButton(
-                      onPressed: () {Navigator.pushNamed(context, '/fifth');},
+                      onPressed: () {Navigator.pushNamed(context, '/sixth');},
                       child: Text('Patient 3',style: kBodyText),
+                    ),
+                  ),
+
+                  Container(
+                    width:150,
+                    margin: EdgeInsets.only(top: 30),
+                    decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                    child: FlatButton(
+                      onPressed: () {Navigator.pushNamed(context, '/second');},
+                      child: Text('Back',style: kBodyText),
                     ),
                   ),
                  
@@ -230,16 +256,21 @@ class _Alaa extends State<Alaa> {
       );
   }
 
-  int time = 3;
-  void updateDataSource(int data) {
-    chartData.add(LiveData(time++, data));
+  double time = 3;
+  int t=3;
+  void updateDataSource(double data1,double data2) {
+    chartData.add(LiveData(time++, data1));
     chartData.removeAt(0);
     _chartSeriesController.updateDataSource(
         addedDataIndex: chartData.length - 1, removedDataIndex: 0);
-    chartRead.add(LiveRead(time++, (math.Random().nextInt(60) + 30)));
+    chartRead.add(LiveRead(time++, data2));
     chartRead.removeAt(0);
     _chartReadController.updateDataSource(
-        addedDataIndex: chartRead.length - 1, removedDataIndex: 0);
+      addedDataIndex: chartRead.length - 1, removedDataIndex: 0);
+    chartNum.add(LiveNum(t++, (math.Random().nextInt(60) + 30)));
+    chartNum.removeAt(0);
+    _chartNumController.updateDataSource(
+        addedDataIndex: chartNum.length - 1, removedDataIndex: 0);
   }
 
   void getReadings(Timer timer) async {
@@ -248,8 +279,9 @@ class _Alaa extends State<Alaa> {
     if (temp.length > data.length) {
       var newLength = temp.length - data.length;
       for (int j = 0; j < newLength; j++) {
-        data.add({'Temperature': temp[j + length]['Temperature']});
-        updateDataSource(temp[j + length]['Temperature']);
+        data.add({'Temperature': temp[j + length]['Temperature'],'Humidity':temp[j + length]['Humidity']});
+        updateDataSource(temp[j + length]['Temperature'],temp[j + length]['Humidity']);
+        
       }
     }
     data = convertToList(temp);
@@ -270,16 +302,29 @@ class _Alaa extends State<Alaa> {
       LiveRead(2, 22),
     ];
   }
+  List<LiveNum> getChartNum() {
+    return <LiveNum>[
+      LiveNum(0, 10),
+      LiveNum(1, 15),
+      LiveNum(2, 22),
+    ];
+  }
 }
 
 class LiveData {
   LiveData(this.time, this.speed);
-  final int time;
-  final num speed;
+  final double time;
+  final double speed;
 }
 
 class LiveRead {
   LiveRead(this.time, this.temp);
+  final double time;
+  final double temp;
+}
+
+class LiveNum {
+  LiveNum(this.time, this.number);
   final int time;
-  final num temp;
+  final num number;
 }

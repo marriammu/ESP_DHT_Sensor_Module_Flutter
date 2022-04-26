@@ -51,7 +51,7 @@ class _FifthPage extends State<FifthPage> {
   }
 
   getSensorData() async {
-    var res = await http.get(Uri.parse('http://192.168.1.9:3000/SensorsData'),
+    var res = await http.get(Uri.parse('http://192.168.1.32:3000/SensorsData'),
         headers: {
           "Accept": "application/json",
           "Access-Control-Allow-Origin": "*"
@@ -107,7 +107,7 @@ class _FifthPage extends State<FifthPage> {
                     height: 50,
                     child: Center(
                       child: Text(
-                        'Patient 3',
+                        'Patient 2',
                         style: kHeading,
                       ),
                     ),
@@ -119,14 +119,14 @@ class _FifthPage extends State<FifthPage> {
                   Expanded(
                       child: Scaffold(
                           body: SfCartesianChart(
-                              series: <LineSeries<LiveData, int>>[
-                        LineSeries<LiveData, int>(
+                              series: <LineSeries<LiveData, double>>[
+                        LineSeries<LiveData, double>(
                           onRendererCreated:
                               (ChartSeriesController controller) {
                             _chartSeriesController = controller;
                           },
                           dataSource: chartData,
-                          color: Color.fromARGB(255, 19, 162, 14), 
+                          color: const Color.fromRGBO(192, 108, 132, 1),
                           xValueMapper: (LiveData sales, _) => sales.time,
                           yValueMapper: (LiveData sales, _) => sales.speed,
                         )
@@ -177,13 +177,14 @@ class _FifthPage extends State<FifthPage> {
     );
   }
 
-  int time = 3;
-  void updateDataSource(int data) {
+  double time = 3;
+  int t=3;
+  void updateDataSource(double data) {
     chartData.add(LiveData(time++, data));
     chartData.removeAt(0);
     _chartSeriesController.updateDataSource(
         addedDataIndex: chartData.length - 1, removedDataIndex: 0);
-    chartRead.add(LiveRead(time++, (math.Random().nextInt(60) + 30)));
+    chartRead.add(LiveRead(t++, (math.Random().nextInt(60) + 30)));
     chartRead.removeAt(0);
     _chartReadController.updateDataSource(
         addedDataIndex: chartRead.length - 1, removedDataIndex: 0);
@@ -221,8 +222,8 @@ class _FifthPage extends State<FifthPage> {
 
 class LiveData {
   LiveData(this.time, this.speed);
-  final int time;
-  final num speed;
+  final double time;
+  final double speed;
 }
 
 class LiveRead {

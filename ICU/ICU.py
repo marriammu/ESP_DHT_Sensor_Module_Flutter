@@ -11,9 +11,9 @@ def Data():
     print(request_data)
     global Temp , Hum
     Temp=(request_data['Temperature'])
-    Temp = int(float(Temp))
+    Temp = float(Temp)
     Hum=(request_data['Humidity'])
-    Hum = int(float(Hum))
+    Hum = float(Hum)
     SensorData = {"Temperature": Temp , "Humidity" : Hum } 
     if toggle == 1 :  
         DataArray.append(SensorData)
@@ -34,4 +34,4 @@ def Toggle():
     print (toggle)
     return ('Toggle Done')
 if __name__ == "__main__":
-    app.run(host="192.168.1.9", port=3000, debug=True)
+    app.run(host="192.168.1.32", port=3000, debug=True)

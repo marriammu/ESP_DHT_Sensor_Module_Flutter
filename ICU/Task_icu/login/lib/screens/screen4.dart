@@ -54,7 +54,8 @@ class _WebSocketLed extends State<WebSocketLed> {
   }
   
   getSensorData() async {
-    var res = await http.get(Uri.parse('http://192.168.1.9:3000/SensorsData'),
+    // var res = await http.get(Uri.parse('http://192.168.1.9:3000/SensorsData'),
+    var res = await http.get(Uri.parse('http://192.168.1.32:3000/SensorsData'),
         headers: {
           "Accept": "application/json",
           "Access-Control-Allow-Origin": "*"
@@ -88,6 +89,7 @@ class _WebSocketLed extends State<WebSocketLed> {
   void initState() {
     chartData = getChartData();
     chartRead = getChartRead();
+    chartNum = getChartNum();
 
     Timer.periodic(const Duration(seconds: 1), getReadings);
     super.initState();
@@ -165,7 +167,7 @@ class _WebSocketLed extends State<WebSocketLed> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                     child: FlatButton(
-                      onPressed: () {Navigator.pushNamed(context, '/second');},
+                      onPressed: () {Navigator.pushNamed(context, '/fifth');},
                       child: Text('Patient 1',style: kBodyText),
                     ),
                   ),
@@ -181,8 +183,8 @@ class _WebSocketLed extends State<WebSocketLed> {
                            width:700,
                            child:Scaffold(
                           body: SfCartesianChart(
-                              series: <LineSeries<LiveData, int>>[
-                        LineSeries<LiveData, int>(
+                              series: <LineSeries<LiveData, double>>[
+                        LineSeries<LiveData, double>(
                           onRendererCreated:
                               (ChartSeriesController controller) {
                             _chartSeriesController = controller;
@@ -232,8 +234,8 @@ class _WebSocketLed extends State<WebSocketLed> {
 
                       child: Scaffold(
                           body: SfCartesianChart(
-                              series: <LineSeries<LiveRead, int>>[
-                        LineSeries<LiveRead, int>(
+                              series: <LineSeries<LiveRead, double>>[
+                        LineSeries<LiveRead, double>(
                           onRendererCreated:
                               (ChartSeriesController controller) {
                             _chartReadController = controller;
@@ -290,8 +292,9 @@ class _WebSocketLed extends State<WebSocketLed> {
     );
   }
 
-  int time = 3;
-  void updateDataSource(int data1,int data2) {
+  double time = 3;
+  int t=3;
+  void updateDataSource(double data1,double data2) {
     chartData.add(LiveData(time++, data1));
     chartData.removeAt(0);
     _chartSeriesController.updateDataSource(
@@ -300,7 +303,7 @@ class _WebSocketLed extends State<WebSocketLed> {
     chartRead.removeAt(0);
     _chartReadController.updateDataSource(
       addedDataIndex: chartRead.length - 1, removedDataIndex: 0);
-    chartNum.add(LiveNum(time++, (math.Random().nextInt(60) + 30)));
+    chartNum.add(LiveNum(t++, (math.Random().nextInt(60) + 30)));
     chartNum.removeAt(0);
     _chartNumController.updateDataSource(
         addedDataIndex: chartNum.length - 1, removedDataIndex: 0);
@@ -352,14 +355,14 @@ class _WebSocketLed extends State<WebSocketLed> {
 
 class LiveData {
   LiveData(this.time, this.speed);
-  final int time;
-  final num speed;
+  final double time;
+  final double speed;
 }
 
 class LiveRead {
   LiveRead(this.time, this.temp);
-  final int time;
-  final num temp;
+  final double time;
+  final double temp;
 }
 
 class LiveNum {
