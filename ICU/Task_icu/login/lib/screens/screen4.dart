@@ -38,6 +38,7 @@ class _WebSocketLed extends State<WebSocketLed> {
    ChartSeriesController _chartNumController;
   // late Future<dynamic> _futureData;
   List<Map<String, dynamic>> data = [];
+  List<Map<String, dynamic>> data2 = [];
   
   List<Map<String, dynamic>> convertToList(List<dynamic> data) {
     List<Map<String, dynamic>> newData = [];
@@ -45,17 +46,15 @@ class _WebSocketLed extends State<WebSocketLed> {
     for (int i = 0; i < length; ++i) {
       newData.add({
         'Temperature': data[i]["Temperature"],
-        'Humidity': data[i]["Humidity"],
-        'Time': data[i]["Time"]
+        'Humidity': data[i]["Humidity"]
       });
     }
-    print(newData);
+    // print(newData);
     return newData;
   }
   
-  getSensorData() async {
-    // var res = await http.get(Uri.parse('http://192.168.1.9:3000/SensorsData'),
-    var res = await http.get(Uri.parse('http://192.168.1.32:3000/SensorsData'),
+  getTemperatureData() async {
+    var res = await http.get(Uri.parse('http://192.168.1.9:3000/Temperature'),
         headers: {
           "Accept": "application/json",
           "Access-Control-Allow-Origin": "*"
@@ -63,9 +62,19 @@ class _WebSocketLed extends State<WebSocketLed> {
     if (res.statusCode == 200) {
       var jasonObj = json.decode(res.body) as List<dynamic>;
       print('7aga');
-      print(jasonObj);
+      // print(jasonObj);
       return jasonObj;
-
+    }
+  }
+   getHumidityData() async {
+    var res = await http.get(Uri.parse('http://192.168.1.9:3000/Humidity'),
+        headers: {
+          "Accept": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        });
+    if (res.statusCode == 200) {
+      var jasonObj = json.decode(res.body) as List<dynamic>;
+      return jasonObj;
     }
   }
 
@@ -92,6 +101,8 @@ class _WebSocketLed extends State<WebSocketLed> {
     chartNum = getChartNum();
 
     Timer.periodic(const Duration(seconds: 1), getReadings);
+    Timer.periodic(const Duration(seconds: 1), getReadings2);
+    Timer.periodic(const Duration(seconds: 1), getReadings3);
     super.initState();
   }
 
@@ -293,40 +304,59 @@ class _WebSocketLed extends State<WebSocketLed> {
   }
 
   double time = 3;
+  double time2 = 3;
   int t=3;
-  void updateDataSource(double data1,double data2) {
-    chartData.add(LiveData(time++, data1));
-    chartData.removeAt(0);
-    _chartSeriesController.updateDataSource(
-        addedDataIndex: chartData.length - 1, removedDataIndex: 0);
-    chartRead.add(LiveRead(time++, data2));
-    chartRead.removeAt(0);
-    _chartReadController.updateDataSource(
-      addedDataIndex: chartRead.length - 1, removedDataIndex: 0);
+  void updateData() {
     chartNum.add(LiveNum(t++, (math.Random().nextInt(60) + 30)));
     chartNum.removeAt(0);
     _chartNumController.updateDataSource(
         addedDataIndex: chartNum.length - 1, removedDataIndex: 0);
   }
+  void updateDataSource(double data1) {
+    chartData.add(LiveData(time++, data1));
+    chartData.removeAt(0);
+    _chartSeriesController.updateDataSource(
+        addedDataIndex: chartData.length - 1, removedDataIndex: 0);
+  }
 
+    void updateDataSource2(double data2) {
+    chartRead.add(LiveRead(time2++, data2));
+    chartRead.removeAt(0);
+    _chartReadController.updateDataSource(
+      addedDataIndex: chartRead.length - 1, removedDataIndex: 0);
+    }
 
-  
 
   void getReadings(Timer timer) async {
-    var temp = await getSensorData();
+    var temp = await getTemperatureData();
     var length = data.length;
     if (temp.length > data.length) {
       var newLength = temp.length - data.length;
       for (int j = 0; j < newLength; j++) {
-        data.add({'Temperature': temp[j + length]['Temperature'],'Humidity':temp[j + length]['Humidity']});
-        updateDataSource(temp[j + length]['Temperature'],temp[j + length]['Humidity']);
-        
-      }
+        data.add({'Temperature': temp[j + length]['Temperature']});
+        updateDataSource(temp[j + length]['Temperature']);
+      }   
     }
     data = convertToList(temp);
-  }
 
-  List<LiveData> getChartData() {
+  }
+ void getReadings2(Timer timer) async {
+    var temp2 = await getHumidityData();
+    var length2 = data2.length;
+    if (temp2.length > data2.length) {  
+      var newLength2 = temp2.length - data2.length;
+      for (int j = 0; j < newLength2; j++) {
+        data.add({'Humidity': temp2[j + length2]['Humidity']});
+        updateDataSource2(temp2[j + length2]['Humidity']);
+      }
+    }
+    data2 = convertToList(temp2);
+ }
+ void getReadings3(Timer timer) async {
+  
+    updateData();
+  }
+ List<LiveData> getChartData() {
     return <LiveData>[
       LiveData(0, 42),
       LiveData(1, 47),

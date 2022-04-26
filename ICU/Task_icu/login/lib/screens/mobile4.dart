@@ -54,16 +54,16 @@ class _Alaa extends State<Alaa> {
   }
 
   getSensorData() async {
-    // var res = await http.get(Uri.parse('http://192.168.1.9:3000/SensorsData'),
-    var res = await http.get(Uri.parse('http://192.168.1.32:3000/SensorsData'),
+    var res = await http.get(Uri.parse('http://192.168.1.9:3000/SensorsData'),
+    // var res = await http.get(Uri.parse('http://192.168.1.32:3000/SensorsData'),
         headers: {
           "Accept": "application/json",
           "Access-Control-Allow-Origin": "*"
         });
     if (res.statusCode == 200) {
       var jasonObj = json.decode(res.body) as List<dynamic>;
-      print('7aga');
-      print(jasonObj);
+      // print('7aga');
+      // print(jasonObj);
       return jasonObj;
 
     }

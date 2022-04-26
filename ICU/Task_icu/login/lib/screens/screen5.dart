@@ -51,7 +51,7 @@ class _FifthPage extends State<FifthPage> {
   }
 
   getSensorData() async {
-    var res = await http.get(Uri.parse('http://192.168.1.32:3000/SensorsData'),
+    var res = await http.get(Uri.parse('http://192.168.1.9:3000/Temperature'),
         headers: {
           "Accept": "application/json",
           "Access-Control-Allow-Origin": "*"
@@ -151,7 +151,7 @@ class _FifthPage extends State<FifthPage> {
                   ),
                     child: FlatButton(
                       onPressed: () async {
-                  await http.post(Uri.parse('http://192.168.1.9:3000/Toggle'));
+                  await http.post(Uri.parse('http://192.168.1.9:3000//ToggleTemperature'));
                 },
                       child: Text('ON/OFF',style: kBodyText),
                     ),
