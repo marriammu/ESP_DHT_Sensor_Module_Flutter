@@ -7,8 +7,8 @@ import './screens/screen5.dart';
 // import './screens/screenfake.dart';
 // import './screens/screen6.dart';
 import './screens/screen7.dart';
-// import './screens/screen4.dart';
-import 'screens/mobile4.dart';
+import './screens/screen4.dart';
+// import 'screens/mobile4.dart';
 
 void main() {
   runApp(MyApp());
@@ -31,11 +31,11 @@ class MyApp extends StatelessWidget {
        initialRoute: '/',
        routes: {
          '/second': (context) => const SecondPage(),
-        //  '/third': (context) => const WebSocketLed(),
+         '/third': (context) => const WebSocketLed(),
          '/fifth': (context) => const FifthPage(),
          '/sixth': (context) => const Test(),
          
-         '/third': (context) => const Alaa(),//mobile
+        //  '/third': (context) => const Alaa(),//mobile
       }
     );
   }
