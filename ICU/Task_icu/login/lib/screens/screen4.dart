@@ -168,10 +168,10 @@ class _WebSocketLed extends State<WebSocketLed> {
                               primaryYAxis: NumericAxis(
                                   axisLine: const AxisLine(width: 0),
                                   majorTickLines: const MajorTickLines(size: 0),
-                                  title: AxisTitle(text: 'Sensor (C)'))))
+                                  title: AxisTitle(text: 'Sensor'))))
                          ),
                          Container(
-                    width:150,
+                             width:150,
                     margin: EdgeInsets.only(top: 30),
                     decoration: BoxDecoration(
                     color: Colors.redAccent,
@@ -181,7 +181,9 @@ class _WebSocketLed extends State<WebSocketLed> {
                       onPressed: () {Navigator.pushNamed(context, '/fifth');},
                       child: Text('Patient 1',style: kBodyText),
                     ),
-                  ),
+                    
+
+                           )
                          ],
 
                     ),
@@ -217,8 +219,32 @@ class _WebSocketLed extends State<WebSocketLed> {
                                   majorTickLines: const MajorTickLines(size: 0),
                                   title: AxisTitle(text: 'Temprature (C)'))))
                          ),
-                         Container(
-                    width:150,
+                         Container(child:Row(children: [Column(children: [
+                           Container(
+                             width:150,
+                    margin: EdgeInsets.only(top: 30),
+                    decoration: BoxDecoration(
+                    color: Colors.redAccent,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                    child: FlatButton(
+                      onPressed: () async {
+                  await http.post(Uri.parse('http://192.168.1.9:3000/Temperature'));
+                },
+                      child: Text('ON/OFF',style: kBodyText),
+                    ),
+                    
+
+                           )
+                         ],
+                         ),
+                         SizedBox(
+                    width: 20,
+                  ),
+                         Column(children: [
+
+                           Container(
+                             width:150,
                     margin: EdgeInsets.only(top: 30),
                     decoration: BoxDecoration(
                     color: Colors.redAccent,
@@ -228,6 +254,18 @@ class _WebSocketLed extends State<WebSocketLed> {
                       onPressed: () {Navigator.pushNamed(context, '/fifth');},
                       child: Text('Patient 2',style: kBodyText),
                     ),
+                    
+
+                           )
+
+                         ],)
+                         
+
+                         ],
+                         
+
+                         )
+                    
                   ),
                          ],
 
@@ -270,8 +308,32 @@ class _WebSocketLed extends State<WebSocketLed> {
 
                          
                   
-                  Container(
-                    width:150,
+                  Container(child:Row(children: [Column(children: [
+                           Container(
+                             width:150,
+                    margin: EdgeInsets.only(top: 30),
+                    decoration: BoxDecoration(
+                    color: Colors.redAccent,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                    child: FlatButton(
+                      onPressed: () async {
+                  await http.post(Uri.parse('http://192.168.1.9:3000/ToggleHumidity'));
+                },
+                      child: Text('ON/OFF',style: kBodyText),
+                    ),
+                    
+
+                           )
+                         ],
+                         ),
+                         SizedBox(
+                    width: 20,
+                  ),
+                         Column(children: [
+
+                           Container(
+                             width:150,
                     margin: EdgeInsets.only(top: 30),
                     decoration: BoxDecoration(
                     color: Colors.redAccent,
@@ -281,6 +343,18 @@ class _WebSocketLed extends State<WebSocketLed> {
                       onPressed: () {Navigator.pushNamed(context, '/sixth');},
                       child: Text('Patient 3',style: kBodyText),
                     ),
+                    
+
+                           )
+
+                         ],)
+                         
+
+                         ],
+                         
+
+                         )
+                    
                   ),
                   Container(
                     width:150,

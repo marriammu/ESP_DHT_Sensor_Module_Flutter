@@ -38,6 +38,7 @@ class _Alaa extends State<Alaa> {
    ChartSeriesController _chartNumController;
   // late Future<dynamic> _futureData;
   List<Map<String, dynamic>> data = [];
+  List<Map<String, dynamic>> data2 = [];
   
   List<Map<String, dynamic>> convertToList(List<dynamic> data) {
     List<Map<String, dynamic>> newData = [];
@@ -45,27 +46,35 @@ class _Alaa extends State<Alaa> {
     for (int i = 0; i < length; ++i) {
       newData.add({
         'Temperature': data[i]["Temperature"],
-        'Humidity': data[i]["Humidity"],
-        'Time': data[i]["Time"]
+        'Humidity': data[i]["Humidity"]
       });
     }
-    print(newData);
+    // print(newData);
     return newData;
   }
 
-  getSensorData() async {
-    var res = await http.get(Uri.parse('http://192.168.1.9:3000/SensorsData'),
-    // var res = await http.get(Uri.parse('http://192.168.1.32:3000/SensorsData'),
+  getTemperatureData() async {
+    var res = await http.get(Uri.parse('http://192.168.1.9:3000/Temperature'),
         headers: {
           "Accept": "application/json",
           "Access-Control-Allow-Origin": "*"
         });
     if (res.statusCode == 200) {
       var jasonObj = json.decode(res.body) as List<dynamic>;
-      // print('7aga');
+      print('7aga');
       // print(jasonObj);
       return jasonObj;
-
+    }
+  }
+   getHumidityData() async {
+    var res = await http.get(Uri.parse('http://192.168.1.9:3000/Humidity'),
+        headers: {
+          "Accept": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        });
+    if (res.statusCode == 200) {
+      var jasonObj = json.decode(res.body) as List<dynamic>;
+      return jasonObj;
     }
   }
 
@@ -92,6 +101,8 @@ class _Alaa extends State<Alaa> {
     chartNum = getChartNum();
 
     Timer.periodic(const Duration(seconds: 1), getReadings);
+    Timer.periodic(const Duration(seconds: 1), getReadings2);
+    Timer.periodic(const Duration(seconds: 1), getReadings3);
     super.initState();
   }
 
@@ -105,15 +116,25 @@ class _Alaa extends State<Alaa> {
       
       child: Scaffold(
         backgroundColor: Colors.transparent,
-          appBar: AppBar(
-              title: Text("Patient Rooms"), backgroundColor: Colors.redAccent),
+          // appBar: AppBar(
+          //     title: Text("Patient Rooms"), backgroundColor: Colors.redAccent),
           
           body: Container(
            
               alignment: Alignment.topCenter, //inner widget alignment to center
               padding: EdgeInsets.all(20),
               child: Column(
+                
                 children: <Widget>[
+                  Container(
+                    height: 80,
+                    child: Center(
+                      child: Text(
+                        'Patient Rooms',
+                        style: kHeading,
+                      ),
+                    ),
+                  ),
                   Expanded(
 
                       child: Scaffold(
@@ -139,10 +160,14 @@ class _Alaa extends State<Alaa> {
                               primaryYAxis: NumericAxis(
                                   axisLine: const AxisLine(width: 0),
                                   majorTickLines: const MajorTickLines(size: 0),
-                                  title: AxisTitle(text: 'Sensor'))))),
+                                  title: AxisTitle(text: 'Sensor'))))
+                         ),
                                   
-                    Container(
-                    width:120,
+                    Container(child:Row(children: [
+                         Column(children: [
+
+                           Container(
+                             width:80,
                     margin: EdgeInsets.only(top: 30),
                     decoration: BoxDecoration(
                     color: Colors.redAccent,
@@ -150,8 +175,19 @@ class _Alaa extends State<Alaa> {
                   ),
                     child: FlatButton(
                       onPressed: () {Navigator.pushNamed(context, '/fifth');},
-                      child: Text('Patient 1',style: kBodyText),
+                      child: Text('P1',style: kBodyText),
                     ),
+                    
+
+                           )
+
+                         ],)
+                         
+
+                         ],
+
+                         )
+                    
                   ),
                   SizedBox(
                     height: 30,
@@ -180,11 +216,36 @@ class _Alaa extends State<Alaa> {
                               primaryYAxis: NumericAxis(
                                   axisLine: const AxisLine(width: 0),
                                   majorTickLines: const MajorTickLines(size: 0),
-                                  title: AxisTitle(text: 'Temp (C)'))))),
+                                  title: AxisTitle(text: 'Temp'))))
+                         ),
                                  
 
-                              Container(
-                    width:120,
+                              Container(child:Row(children: [Column(children: [
+                           Container(
+                             width:80,
+                    margin: EdgeInsets.only(top: 30),
+                    decoration: BoxDecoration(
+                    color: Colors.redAccent,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                    child: FlatButton(
+                      onPressed: () async {
+                  await http.post(Uri.parse('http://192.168.1.9:3000/Temperature'));
+                },
+                      child: Text('O/F',style: kBodyText),
+                    ),
+                    
+
+                           )
+                         ],
+                         ),
+                         SizedBox(
+                    width: 10,
+                  ),
+                         Column(children: [
+
+                           Container(
+                             width:80,
                     margin: EdgeInsets.only(top: 30),
                     decoration: BoxDecoration(
                     color: Colors.redAccent,
@@ -192,8 +253,19 @@ class _Alaa extends State<Alaa> {
                   ),
                     child: FlatButton(
                       onPressed: () {Navigator.pushNamed(context, '/fifth');},
-                      child: Text('Patient 2',style: kBodyText),
+                      child: Text('P2',style: kBodyText),
                     ),
+                    
+
+                           )
+
+                         ],)
+                         
+
+                         ],
+
+                         )
+                    
                   ),
                    SizedBox(
                     height: 30,
@@ -222,10 +294,34 @@ class _Alaa extends State<Alaa> {
                               primaryYAxis: NumericAxis(
                                   axisLine: const AxisLine(width: 0),
                                   majorTickLines: const MajorTickLines(size: 0),
-                                  title: AxisTitle(text: 'Humidity'))))),
+                                  title: AxisTitle(text: 'Hum'))))),
 
-                 Container(
-                    width:120,
+                  Container(child:Row(children: [Column(children: [
+                           Container(
+                             width:80,
+                    margin: EdgeInsets.only(top: 30),
+                    decoration: BoxDecoration(
+                    color: Colors.redAccent,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                    child: FlatButton(
+                      onPressed: () async {
+                  await http.post(Uri.parse('http://192.168.1.9:3000/ToggleHumidity'));
+                },
+                      child: Text('O/F',style: kBodyText),
+                    ),
+                    
+
+                           )
+                         ],
+                         ),
+                         SizedBox(
+                    width: 10,
+                  ),
+                         Column(children: [
+
+                           Container(
+                             width:80,
                     margin: EdgeInsets.only(top: 30),
                     decoration: BoxDecoration(
                     color: Colors.redAccent,
@@ -233,8 +329,19 @@ class _Alaa extends State<Alaa> {
                   ),
                     child: FlatButton(
                       onPressed: () {Navigator.pushNamed(context, '/sixth');},
-                      child: Text('Patient 3',style: kBodyText),
+                      child: Text('P3',style: kBodyText),
                     ),
+                    
+
+                           )
+
+                         ],)
+                         
+
+                         ],
+
+                         )
+                    
                   ),
 
                   Container(
@@ -257,37 +364,59 @@ class _Alaa extends State<Alaa> {
   }
 
   double time = 3;
+  double time2 = 3;
   int t=3;
-  void updateDataSource(double data1,double data2) {
-    chartData.add(LiveData(time++, data1));
-    chartData.removeAt(0);
-    _chartSeriesController.updateDataSource(
-        addedDataIndex: chartData.length - 1, removedDataIndex: 0);
-    chartRead.add(LiveRead(time++, data2));
-    chartRead.removeAt(0);
-    _chartReadController.updateDataSource(
-      addedDataIndex: chartRead.length - 1, removedDataIndex: 0);
+  void updateData() {
     chartNum.add(LiveNum(t++, (math.Random().nextInt(60) + 30)));
     chartNum.removeAt(0);
     _chartNumController.updateDataSource(
         addedDataIndex: chartNum.length - 1, removedDataIndex: 0);
   }
+  void updateDataSource(double data1) {
+    chartData.add(LiveData(time++, data1));
+    chartData.removeAt(0);
+    _chartSeriesController.updateDataSource(
+        addedDataIndex: chartData.length - 1, removedDataIndex: 0);
+  }
+
+    void updateDataSource2(double data2) {
+    chartRead.add(LiveRead(time2++, data2));
+    chartRead.removeAt(0);
+    _chartReadController.updateDataSource(
+      addedDataIndex: chartRead.length - 1, removedDataIndex: 0);
+    }
+
 
   void getReadings(Timer timer) async {
-    var temp = await getSensorData();
+    var temp = await getTemperatureData();
     var length = data.length;
     if (temp.length > data.length) {
       var newLength = temp.length - data.length;
       for (int j = 0; j < newLength; j++) {
-        data.add({'Temperature': temp[j + length]['Temperature'],'Humidity':temp[j + length]['Humidity']});
-        updateDataSource(temp[j + length]['Temperature'],temp[j + length]['Humidity']);
-        
-      }
+        data.add({'Temperature': temp[j + length]['Temperature']});
+        updateDataSource(temp[j + length]['Temperature']);
+      }   
     }
     data = convertToList(temp);
-  }
 
-  List<LiveData> getChartData() {
+  }
+ void getReadings2(Timer timer) async {
+    var temp2 = await getHumidityData();
+    var length2 = data2.length;
+    if (temp2.length > data2.length) {  
+      var newLength2 = temp2.length - data2.length;
+      for (int j = 0; j < newLength2; j++) {
+        data.add({'Humidity': temp2[j + length2]['Humidity']});
+        updateDataSource2(temp2[j + length2]['Humidity']);
+      }
+    }
+    data2 = convertToList(temp2);
+ }
+ void getReadings3(Timer timer) async {
+  
+    updateData();
+  }
+ List<LiveData> getChartData() {
     return <LiveData>[
       LiveData(0, 42),
       LiveData(1, 47),
@@ -309,6 +438,9 @@ class _Alaa extends State<Alaa> {
       LiveNum(2, 22),
     ];
   }
+
+
+
 }
 
 class LiveData {
